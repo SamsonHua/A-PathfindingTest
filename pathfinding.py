@@ -5,9 +5,10 @@
 
 # == Dependencies ==
 import numpy as np
+import math
 
 #===================================
-#               INPUTS
+#             INPUTS
 #===================================
 
 #Input starting point here [x,y]
@@ -16,7 +17,7 @@ startingPoint = [0,0]
 targetPoint = [6,4]
 
 #===================================
-#               CLASSES
+#             CLASSES
 #===================================
 class Node:
     def __init__ (self,x,y):
@@ -24,9 +25,9 @@ class Node:
         self.x = x
         self.y = y
     parent = None
-    g = None
-    h = None
-    f = None
+    g = 0
+    h = 0
+    f = 0
 #===================================
 
 #Store cells to be searched and cells that have already been searched
@@ -35,17 +36,25 @@ closed_list = []
 blockages = [[2,2],[3,2],[4,2]]
 
 #===================================
-#               FUNCTIONS
+#            FUNCTIONS
 #===================================
 
 #calculateH() calculates the H value for the A* algorithm 
-def calculateH():
-    return None
+def calculateH(node, targetPoint):
+    x_dif = abs(node[0] - targetPoint[0])
+    y_dif = abs(node[1] - targetPoint[1])
+    distance = (math.sqrt((x_dif**2) + (y_dif**2))) * 10
+    distance = math.trunc(distance)
+    return distance
 
 
 #calculateG() calculates the H value for the A* algorithm 
-def calculateG():
-    return None
+def calculateG(parentNode, node):
+    x_dif = abs(parentNode.x - node[0])
+    y_dif = abs(parentNode.y - node[1])
+    distance = (math.sqrt((x_dif**2) + (y_dif**2))) * 10
+    distance = math.trunc(distance)
+    return distance
 
 
 #checkNodes() only checks to see whether there is a blockage or the spot is non existent
@@ -84,13 +93,11 @@ def calculateNodes(locations, parentNode):
     
     for node in locations:
         newNode = Node(node[0],node[1])
-        newNode.g = parentNode.g + calculateG(parentNode, node)
-        newNode.h = calculateH(parentNode, targetPoint)
+        newNode.g = int(parentNode.g) + int(calculateG(parentNode, node))
+        newNode.h = int(calculateH(node, targetPoint))
         newNode.f = newNode.g + newNode.h
-        #TODO Implement check for open & closed list
-    
         nodeValues.append(newNode)
-
+        
     return nodeValues
 
 #Create pathfinding grid
@@ -107,11 +114,16 @@ closed_list.append(startingNode.location)
 #Check for first set of nodes
 locations = checkNodes(startingNode, grid)
 
-open_list.append(calculateNodes(locations, startingNode))
+calculatedNodes = calculateNodes(locations, startingNode)
 
+for i in calculatedNodes:
+    open_list.append(i)
 
-print(locations)
-
+#Print the f,h,g
+for nodes in open_list:
+    print(nodes.g)
+    print(nodes.h)
+    print(nodes.f)
 
 #Add starting point and end point to array, as well as blockages
 grid[startingPoint[0]][startingPoint[1]] = 1
