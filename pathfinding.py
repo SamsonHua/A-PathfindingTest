@@ -24,6 +24,7 @@ class Node:
         self.location = [x,y]
         self.x = x
         self.y = y
+        self.coords = [x,y]
     parent = None
     g = 0
     h = 0
@@ -96,8 +97,25 @@ def calculateNodes(locations, parentNode):
         newNode.g = int(parentNode.g) + int(calculateG(parentNode, node))
         newNode.h = int(calculateH(node, targetPoint))
         newNode.f = newNode.g + newNode.h
-        nodeValues.append(newNode)
+        newNode.parent = parentNode
+        #Temporary Variable
+        duplicateNode = "No"
+
+        #Check for duplicate in open and closed list
+        closedNodes = []
+
+        for nodes in closed_list:
+            closedNodes.append(nodes.coords)
         
+        for index, nodes in enumerate(open_list):
+            if newNode.coords == nodes.coords or newNode.coords in closedNodes:
+                duplicateNode == "Yes"
+                if newNode.f < nodes.f:
+                    open_list[index] = newNode
+            
+        if duplicateNode == "No":
+            nodeValues.append(newNode)
+
     return nodeValues
 
 #Create pathfinding grid
@@ -109,7 +127,7 @@ grid = np.zeros((rows,columns))
 
 #Start of algorithm (Add the starting point)
 startingNode = Node(startingPoint[0],startingPoint[1])
-closed_list.append(startingNode.location)
+closed_list.append(startingNode)
 
 #Check for first set of nodes
 locations = checkNodes(startingNode, grid)
@@ -124,6 +142,8 @@ for nodes in open_list:
     print(nodes.g)
     print(nodes.h)
     print(nodes.f)
+    print(nodes.coords)
+    print(nodes.parent)
 
 #Add starting point and end point to array, as well as blockages
 grid[startingPoint[0]][startingPoint[1]] = 1
