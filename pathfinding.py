@@ -118,6 +118,52 @@ def calculateNodes(locations, parentNode):
 
     return nodeValues
 
+def nextNode():
+    smallestF = [open_list[0].f]
+    node_index = [0]
+
+    for index, node in enumerate(open_list):
+        #Skips index 0
+        if index == 0:
+            continue
+        if node.f < smallestF[0]:
+            #Clears index
+            smallestF = []
+            node_index = []
+            #Re-assigns first index 
+            node_index.append(index)
+            smallestF.append(node.f)
+        elif node.f == smallestF[0]:
+            smallestF.append(node.f)
+            node_index.append(index)
+    
+    #Check to see if there are matching f values
+    if len(node_index) > 1:
+        #Check for smallest h value
+        smallestH = [open_list[node_index[0]].h]
+        new_index = [0]
+
+        for h_index in node_index:
+        #Skips index 0
+            if h_index == 0:
+                continue
+            if open_list[h_index] < smallestH[0]:
+                #Clears index
+                smallestH = []
+                new_index = []
+                #Re-assigns first index 
+                new_index.append(h_index)
+                smallestH.append(open_list[h_index])
+            elif open_list[h_index] == smallestH[0]:
+                smallestH.append(open_list[h_index])
+                new_index.append(h_index)
+
+        return open_list[new_index[0]]
+
+    #Return smallest F value
+    else:
+        return open_list[node_index[0]]
+        
 #Create pathfinding grid
 rows = 7
 columns = 7
@@ -144,6 +190,12 @@ for nodes in open_list:
     print(nodes.f)
     print(nodes.coords)
     print(nodes.parent)
+
+#Determine the next square
+current = nextNode()
+print(current.f)
+
+print(current)
 
 #===================================
 #              LOOP
