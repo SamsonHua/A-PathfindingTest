@@ -34,7 +34,7 @@ class Node:
 #Store cells to be searched and cells that have already been searched
 open_list = []
 closed_list = []
-blockages = [[2,2],[3,2],[4,2]]
+blockages = [[2,2],[3,2],[4,2],[1,2]]
 
 #===================================
 #            FUNCTIONS
@@ -143,26 +143,44 @@ def nextNode():
         smallestH = [open_list[node_index[0]].h]
         new_index = [0]
 
-        for h_index in node_index:
+        for index, h_index in enumerate(node_index):
         #Skips index 0
             if h_index == 0:
                 continue
-            if open_list[h_index] < smallestH[0]:
+            currentH = open_list[index].h
+            if currentH < smallestH[0]:
                 #Clears index
                 smallestH = []
                 new_index = []
                 #Re-assigns first index 
                 new_index.append(h_index)
-                smallestH.append(open_list[h_index])
-            elif open_list[h_index] == smallestH[0]:
-                smallestH.append(open_list[h_index])
-                new_index.append(h_index)
-
-        return open_list[new_index[0]]
+                smallestH.append(open_list[index])
+            elif currentH == smallestH[0]:
+                smallestH.append(open_list[index])
+                new_index.append(index)
+        closed_list.append(open_list[new_index[0]])
+        smallestNode = open_list[new_index[0]]
+        open_list.pop(new_index[0])
+        return smallestNode
 
     #Return smallest F value
     else:
-        return open_list[node_index[0]]
+        closed_list.append(open_list[node_index[0]])
+        smallestNode = open_list[node_index[0]]
+        open_list.pop(node_index[0])
+        return smallestNode
+
+def findPath(node):
+    coordinates = [[node.x,node.y]]
+
+    while node.parent != None:
+        x = int(node.parent.x)
+        y = int(node.parent.y)
+        coords = [x,y]
+        coordinates.append(coords)
+        node = node.parent
+
+    return coordinates
         
 #Create pathfinding grid
 rows = 7
@@ -184,34 +202,41 @@ for i in calculatedNodes:
     open_list.append(i)
 
 #Print the f,h,g
-for nodes in open_list:
-    print(nodes.g)
-    print(nodes.h)
-    print(nodes.f)
-    print(nodes.coords)
-    print(nodes.parent)
+# for nodes in open_list:
+#     print(nodes.g)
+#     print(nodes.h)
+#     print(nodes.f)
+#     print(nodes.coords)
+#     print(nodes.parent)
 
 #Determine the next square
 current = nextNode()
-print(current.f)
-
-print(current)
+# grid[current.x][current.y] = 8
 
 #===================================
 #              LOOP
 #===================================
 
+while True:
+    if current.coords == targetPoint:
+        break
+    #Calculate locations
+    locations = checkNodes(current, grid)
+    calculatedNodes = calculateNodes(locations, current)
 
+    for i in calculatedNodes:
+        open_list.append(i)
 
+    current = nextNode()
+    # grid[current.x][current.y] = 8
 
+steps = findPath(current)
+steps.reverse()
 
+for coordinates in steps:
+    grid[coordinates[0]][coordinates[1]] = 9
 
-
-
-
-
-
-
+print(steps)
 
 #===================================
 #             DISPLAY
