@@ -12,7 +12,7 @@ import math
 #===================================
 
 #Input starting point here [x,y]
-startingPoint = [0,0]
+startingPoint = [1,1]
 #Input target node here [x,y]
 targetPoint = [6,4]
 
@@ -144,6 +144,26 @@ for nodes in open_list:
     print(nodes.f)
     print(nodes.coords)
     print(nodes.parent)
+
+#===================================
+#              LOOP
+#===================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+#===================================
+#             DISPLAY
+#===================================
 
 #Add starting point and end point to array, as well as blockages
 grid[startingPoint[0]][startingPoint[1]] = 1
